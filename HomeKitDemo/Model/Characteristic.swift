@@ -18,32 +18,26 @@ extension HMCharacteristic {
         }
     }
     
-    /// Indicates if you can write to the characteristic.
     var isWriteable: Bool {
         return properties.contains(HMCharacteristicPropertyWritable)
     }
     
-    /// Indicates if you can read from the characteristic.
     var isReadable: Bool {
         return properties.contains(HMCharacteristicPropertyReadable)
     }
     
-    /// Indicates if the characteristic is both readable and writable.
     var isReadWrite: Bool {
         return isReadable && isWriteable
     }
     
-    /// Indicates that the characteristic value is a floating point number.
     var isFloat: Bool {
         return metadata?.format == HMCharacteristicMetadataFormatFloat
     }
     
-    /// Indicates that the characteristic value is a signed integer.
     var isInt: Bool {
         return metadata?.format == HMCharacteristicMetadataFormatInt
     }
     
-    /// Indicates that the characteristic value is an unsigned integer.
     var isUInt: Bool {
         return metadata?.format == HMCharacteristicMetadataFormatUInt8
             || metadata?.format == HMCharacteristicMetadataFormatUInt16
@@ -52,17 +46,14 @@ extension HMCharacteristic {
         
     }
     
-    /// Indicates that the characteristic value is a number.
     var isNumeric: Bool {
         return isInt || isFloat || isUInt
     }
     
-    /// Indicates that the characteristic value is a Boolean.
     var isBool: Bool {
         return metadata?.format == HMCharacteristicMetadataFormatBool
     }
     
-    /// The difference between the characteristic’s maximum and minimum values.
     var span: Decimal {
         guard let max = metadata?.maximumValue?.decimalValue,
             let min = metadata?.minimumValue?.decimalValue  else {
@@ -71,18 +62,14 @@ extension HMCharacteristic {
         return max - min
     }
     
-    /// The characteristic value as a float.
     var floatValue: Float? {
         return (value as? NSNumber)?.floatValue
     }
     
-    /// The characteristic value as a decimal value.
     var decimalValue: Decimal? {
         return (value as? NSNumber)?.decimalValue
     }
     
-    /// Returns the value that you get by mapping the given fraction
-    /// to the characteristic's span, accounting for step size.
     func valueFor(fraction: Float) -> Decimal {
         let interval = metadata?.stepValue?.decimalValue ?? 1.0
         var inVal = (Decimal(Double(fraction)) * span) / interval
@@ -91,18 +78,15 @@ extension HMCharacteristic {
         return outVal * interval
     }
     
-    /// A name that best represents the characteristic in the UI.
     var displayName: String {
         return metadata?.manufacturerDescription ?? localizedDescription
     }
     
-    /// A string that represents the characteristic’s value.
     var formattedValueString: String {
         guard
             let value = value,
             let metadata = metadata else { return "—" }
         
-        // Use the metadata to drive the string formatting.
         switch metadata.format {
         case HMCharacteristicMetadataFormatString:
             return value as? String ?? "—"
